@@ -1,0 +1,29 @@
+{
+  "name": "expressjs-at-home",
+  "version": "1.0.0",
+  "description": "study express at home",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon ./src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danglinh152/expressJS-at-home.git"
+  },
+  "author": "danglinh152",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/danglinh152/expressJS-at-home/issues"
+  },
+  "homepage": "https://github.com/danglinh152/expressJS-at-home#readme",
+  "dependencies": {
+    "dotenv": "^17.0.0",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "mysql2": "^3.14.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}

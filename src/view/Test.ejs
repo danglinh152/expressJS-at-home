@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <h1>Hello World</h1>
+    <p class="danglinh">Tôi tên là Đặng Quang Khánh Linh</p>
+    <img src="/images/hehe.jpg" alt="hehe" class="hehe" />
+
+    <h2>Users:</h2>
+    <ul>
+      <% if (User && User.length > 0) { %> <% User.forEach(function(user) { %>
+      <li>
+        <strong>Name:</strong> <%= user.name %>, <strong>Address:</strong> <%= user.address %>, <strong>Age:</strong> <%=
+        user.age %>
+      </li>
+      <% }) %> <% } else { %>
+      <li>No users found.</li>
+      <% } %>
+    </ul>
+  </body>
+</html>
