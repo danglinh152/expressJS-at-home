@@ -4,6 +4,7 @@ const userRouter = require("./routes/Web");
 const configViewEngine = require("./config/ViewEngine");
 const connection = require("./config/Database");
 const User = require("./models/User");
+const routerAPI = require("./routes/Api");
 
 const app = express();
 
@@ -15,7 +16,8 @@ configViewEngine(app);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/", userRouter);
+// app.use("/", userRouter);
+app.use("/api/v1", routerAPI);
 
 (async () => {
   try {

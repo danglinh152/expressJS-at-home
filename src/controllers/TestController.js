@@ -55,6 +55,7 @@ const postCreateUser = async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 };
+
 const deleteUser = async (req, res) => {
   try {
     const userId = req.params.id;
