@@ -8,9 +8,9 @@
   </head>
   <body>
     <h2 style="text-align: center; margin-top: 20px">
-      Update User ID: <%= user.id %>
+      Update User ID: <%= user._id %>
     </h2>
-    <form action="/update-user/<%= user.id %>" method="POST" class="main-form">
+    <form action="/update-user/<%= user._id %>" method="POST" class="main-form">
       <label for="name">Name:</label>
       <input
         type="text"

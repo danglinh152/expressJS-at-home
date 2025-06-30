@@ -1,4 +1,5 @@
 const connection = require("../config/Database");
+const User = require("../models/User");
 
 require("dotenv").config();
 
@@ -17,7 +18,9 @@ const testView = async (req, res) => {
 };
 
 const getHomePage = async (req, res) => {
-  const [results] = await connection.query("SELECT * FROM `users`");
+  // const [results] = await connection.query("SELECT * FROM `users`");
+
+  results = await User.find({});
   res.render("Homepage", { User: results });
 };
 
@@ -27,18 +30,24 @@ const getCreateUser = (req, res) => {
 
 const postCreateUser = async (req, res) => {
   try {
-    const { id, name, address, age } = req.body;
+    const { name, address, age } = req.body;
 
     // Make sure all fields are present (optional but recommended)
-    if (!id || !name || !address || !age) {
+    if (!name || !address || !age) {
       return res.status(400).send("All fields are required!");
     }
 
-    const sql =
-      "INSERT INTO `users` (`id`, `name`, `address`, `age`) VALUES (?, ?, ?, ?)";
-    const values = [id, name, address, age];
+    // const sql =
+    //   "INSERT INTO `users` (`id`, `name`, `address`, `age`) VALUES (?, ?, ?, ?)";
+    // const values = [id, name, address, age];
 
-    await connection.query(sql, values);
+    // await connection.query(sql, values);
+
+    User.create({
+      name,
+      address,
+      age,
+    });
 
     res.redirect("/");
   } catch (error) {
@@ -54,13 +63,15 @@ const deleteUser = async (req, res) => {
       return res.status(400).send("User ID is required.");
     }
 
-    const sql = "DELETE FROM `users` WHERE `id` = ?";
-    const [result] = await connection.query(sql, [userId]);
+    // const sql = "DELETE FROM `users` WHERE `id` = ?";
+    // const [result] = await connection.query(sql, [userId]);
 
-    if (result.affectedRows === 0) {
-      // No user found with this ID
-      return res.status(404).send("User not found.");
-    }
+    // if (result.affectedRows === 0) {
+    //   // No user found with this ID
+    //   return res.status(404).send("User not found.");
+    // }
+
+    await User.deleteOne({ _id: userId }).exec();
 
     // Redirect back to the list or homepage after deletion
     res.redirect("/");
@@ -70,22 +81,23 @@ const deleteUser = async (req, res) => {
   }
 };
 
+const mongoose = require("mongoose");
+
 const getUpdateUser = async (req, res) => {
   try {
     const userId = req.params.id;
 
-    const [results] = await connection.query(
-      "SELECT * FROM `users` WHERE `id` = ?",
-      [userId]
-    );
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).send("Invalid user ID.");
+    }
 
-    if (results.length === 0) {
+    const user = await User.findById(userId).exec();
+
+    if (!user) {
       return res.status(404).send("User not found.");
     }
 
-    const user = results[0];
-
-    res.render("UpdateUser", { user }); // Pass data to your update form EJS
+    res.render("UpdateUser", { user });
   } catch (error) {
     console.error("Error fetching user for update:", error);
     res.status(500).send("Internal Server Error");
@@ -101,12 +113,23 @@ const postUpdateUser = async (req, res) => {
       return res.status(400).send("All fields are required.");
     }
 
-    const sql =
-      "UPDATE `users` SET `name` = ?, `address` = ?, `age` = ? WHERE `id` = ?";
-    const [result] = await connection.query(sql, [name, address, age, userId]);
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).send("Invalid user ID.");
+    }
 
-    if (result.affectedRows === 0) {
-      return res.status(404).send("User not found or no changes made.");
+    const parsedAge = Number(age);
+    if (Number.isNaN(parsedAge)) {
+      return res.status(400).send("Age must be a number.");
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { name, address, age: parsedAge },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).send("User not found.");
     }
 
     res.redirect("/");
