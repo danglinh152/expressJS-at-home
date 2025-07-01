@@ -12,6 +12,8 @@ const {
   postNewCustomer,
   updateTheCustomer,
   deleteTheCustomer,
+  postManyNewCustomer,
+  deleteManyCustomers,
 } = require("../controllers/CustomerController");
 
 const routerAPI = express.Router();
@@ -26,8 +28,10 @@ routerAPI.delete("/users", deleteTheUser);
 
 routerAPI.get("/customers", getAllCustomers);
 routerAPI.post("/customers", postNewCustomer);
+routerAPI.post("/customers-many", postManyNewCustomer);
 routerAPI.put("/customers", updateTheCustomer);
 routerAPI.delete("/customers", deleteTheCustomer);
+routerAPI.delete("/customers-many", deleteManyCustomers);
 
 routerAPI.post("/upload", uploadAPI);
 routerAPI.post("/upload-many", uploadManyAPI);

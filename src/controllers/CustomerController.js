@@ -32,6 +32,24 @@ const postNewCustomer = async (req, res) => {
   }
 };
 
+const postManyNewCustomer = async (req, res) => {
+  //   const { name, address, phone, email, description } = req.body;
+
+  //   const image = await handleUploadImage(req.files);
+
+  // Make sure all fields are present (optional but recommended)
+  try {
+    const customer = await Customer.insertMany(req.body);
+
+    return res.status(201).json({ ErrorCode: 0, data: customer });
+  } catch (error) {
+    console.error("Error inserting customer:", error);
+    return res
+      .status(500)
+      .json({ ErrorCode: 1, data: "Internal Server Error" });
+  }
+};
+
 const updateTheCustomer = async (req, res) => {
   const { id, name, address, phone, email, description } = req.body;
 
@@ -82,9 +100,32 @@ const deleteTheCustomer = async (req, res) => {
   }
 };
 
+const deleteManyCustomers = async (req, res) => {
+  const customerIds = req.body;
+
+  // Validate input: should be a non-empty array of ids
+  if (!Array.isArray(customerIds) || customerIds.length === 0) {
+    return res
+      .status(400)
+      .json({ ErrorCode: 1, data: "An array of customer IDs is required." });
+  }
+
+  try {
+    const deleted = await Customer.deleteMany({ _id: { $in: customerIds } });
+    return res.status(200).json({ ErrorCode: 0, data: deleted });
+  } catch (error) {
+    console.log("error >>> ", error);
+    return res
+      .status(500)
+      .json({ ErrorCode: -1, data: "Internal Server Error" });
+  }
+};
+
 module.exports = {
   getAllCustomers,
   postNewCustomer,
   updateTheCustomer,
   deleteTheCustomer,
+  postManyNewCustomer,
+  deleteManyCustomers,
 };
