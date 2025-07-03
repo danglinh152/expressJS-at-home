@@ -1,11 +1,88 @@
 const { default: mongoose } = require("mongoose");
 const Customer = require("../models/Customer");
 const { handleUploadImage } = require("../services/FileService");
+const aqp = require("api-query-params");
 
 const getAllCustomers = async (req, res) => {
-  const customers = await Customer.find({});
+  const page = parseInt(req.query.page, 10);
+  const query = { ...req.query };
+  delete query.page;
+
+  console.log("query after delete:", query);
+
+  const { filter, limit, sort } = aqp(query);
+
+  const offset = (page - 1) * limit;
+
+  let customers = await Customer.find(filter)
+    .limit(limit)
+    .skip(offset)
+    .sort(sort)
+    .exec();
+
+  console.log("check >>> ", filter);
+
   return res.status(200).json({ ErrorCode: 0, data: customers });
 };
+
+// WITHOUT AQP
+// const getAllCustomers = async (req, res) => {
+//   let customers = null;
+
+//   if (req.query.limit && req.query.page) {
+//     if (!req.query.phone) {
+//       const limit = parseInt(req.query.limit, 10);
+//       const page = parseInt(req.query.page, 10);
+
+//       if (isNaN(limit) || isNaN(page) || limit <= 0 || page <= 0) {
+//         return res
+//           .status(400)
+//           .json({ ErrorCode: 1, data: "Invalid limit or page parameter" });
+//       }
+
+//       const offset = (page - 1) * limit;
+//       console.log("check query string >>>", req.query);
+
+//       customers = await Customer.find({})
+//         .limit(limit)
+//         .skip(offset)
+//         .sort({
+//           name: "desc",
+//         })
+//         .exec();
+//     } else {
+//       const limit = parseInt(req.query.limit, 10);
+//       const page = parseInt(req.query.page, 10);
+//       const phone = req.query.phone;
+
+//       if (isNaN(limit) || isNaN(page) || limit <= 0 || page <= 0) {
+//         return res
+//           .status(400)
+//           .json({ ErrorCode: 1, data: "Invalid limit or page parameter" });
+//       }
+
+//       const offset = (page - 1) * limit;
+//       console.log("check query string >>>", req.query);
+
+//       customers = await Customer.find({})
+//         .where({
+//           phone: {
+//             $eq: phone,
+//           },
+//         })
+//         .limit(limit)
+//         .skip(offset)
+//         .sort({
+//           name: "desc",
+//         })
+//         .exec();
+//     }
+//   } else {
+//     customers = await Customer.find({});
+//   }
+
+//   return res.status(200).json({ ErrorCode: 0, data: customers });
+// };
 
 const postNewCustomer = async (req, res) => {
   const { name, address, phone, email, description } = req.body;

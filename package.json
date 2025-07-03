@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/danglinh152/expressJS-at-home#readme",
   "dependencies": {
+    "api-query-params": "^4.16.0",
     "dotenv": "^17.0.0",
     "ejs": "^3.1.10",
     "express": "^5.1.0",

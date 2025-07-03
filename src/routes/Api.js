@@ -27,6 +27,14 @@ routerAPI.put("/users", updateTheUser);
 routerAPI.delete("/users", deleteTheUser);
 
 routerAPI.get("/customers", getAllCustomers);
+routerAPI.get("/customers/:danglinh/:deptrai", (req, res) => {
+  console.log("check params >>>", req.params);
+  return res.status(200).json({
+    ErrorCode: 0,
+    data: req.params,
+  });
+});
+
 routerAPI.post("/customers", postNewCustomer);
 routerAPI.post("/customers-many", postManyNewCustomer);
 routerAPI.put("/customers", updateTheCustomer);
